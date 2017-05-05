@@ -1,2 +1,3 @@
 #Include 3rd party libraries
-include_directories(nanodbc)
+
+add_subdirectory(nanodbc)
