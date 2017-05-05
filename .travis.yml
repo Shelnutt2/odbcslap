@@ -1,0 +1,82 @@
+sudo: required
+
+language: cpp
+
+branches:
+
+git:
+  depth: 10
+
+
+ref:
+  sources: &sources
+    - ubuntu-toolchain-r-test
+    - george-edison55-precise-backports
+  packages: &packages
+    - cmake
+    - cmake-data
+    - g++-5
+    - gcc-5
+    - libmyodbc
+    - libsqliteodbc
+    - mysql-client
+    - odbc-postgresql
+    - unixodbc
+    - unixodbc-dev
+  sqlite: &sqlite
+    apt:
+      sources: *sources
+      packages: *packages
+  mysql: &mysql
+    mysql: "5.5"
+    apt:
+      sources: *sources
+      packages: *packages
+  postgresql: &postgresql
+    postgresql: "9.1"
+    apt:
+      sources: *sources
+      packages: *packages
+  mariadb: &mariadb
+    mariadb: "10.1"
+    apt:
+      sources: *sources
+      packages: *packages
+
+matrix:
+  include:
+    - addons: *sqlite
+      compiler: gcc
+      env: DB=sqlite
+      os: linux
+    - addons: *mysql
+      compiler: gcc
+      env: DB=mysql
+      os: linux
+    - addons: *postgresql
+      compiler: gcc
+      env: DB=postgresql
+      os: linux
+    - addons: *mariadb
+      compiler: gcc
+      env: DB=mariadb
+      os: linux
+    - compiler: clang
+      env: DB=sqlite
+      os: osx
+
+# before_install runs after matrix.addons.apt installation targets in the matrix
+before_install:
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 50; fi
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-5 50; fi
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo update-alternatives --config gcc; fi
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo update-alternatives --config g++; fi
+
+before_script:
+  - mkdir build
+  - cd build
+  - cmake ..
+
+script:
+  - make -j4
+  - make test

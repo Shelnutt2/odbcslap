@@ -2,7 +2,7 @@
 #include <vector>
 #include <password.hpp>
 #include <cxxopts.hpp>
-#include <odbcslap.hpp>
+#include <Odbcslap.hpp>
 
 
 int main(int argc, char* argv[])

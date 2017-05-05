@@ -2,7 +2,7 @@
 // Created by seth on 5/5/17.
 //
 
-#include <odbcslap.hpp>
+#include <Odbcslap.hpp>
 
 const std::string &Odbcslap::getUsername() const {
   return username;
