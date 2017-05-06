@@ -5,6 +5,8 @@ file( GLOB LIBRARY_SRC_FILES "*.cpp")
 
 list (REMOVE_ITEM LIBRARY_SRC_FILES "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/password.cpp")
 
+include_directories(${NANODBC_INCLUDE_DIR})
+
 add_library(odbcslap ${LIBRARY_SRC_FILES})
 
 link_libraries(odbcslap nanodbc)
