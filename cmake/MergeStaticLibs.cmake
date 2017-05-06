@@ -32,8 +32,8 @@ function(merge_static_libs outlib )
 
 	elseif(APPLE) # Use OSX's libtool to merge archives
 		add_custom_command(TARGET ${outlib} POST_BUILD
-				COMMAND rm "$<TARGET_FILE:${outlib}>"
-				COMMAND /usr/bin/libtool -static -o "$<TARGET_FILE:${outlib}>" ${libfiles})
+			COMMAND rm "$<TARGET_FILE:${outlib}>"
+			COMMAND /usr/bin/libtool -static -o "$<TARGET_FILE:${outlib}>" ${libfiles})
 
 	else() # general UNIX: use "ar" to extract objects and re-add to a common lib
 		foreach(lib ${libs})

@@ -13,7 +13,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 # We define as well a function AddDocTarget in cmake/DoxygenTarget.cmake
 # Taken from https://github.com/Barthelemy/CppProjectTemplate
 add_custom_target(doc) # DEPENDS docProjA docProjB) Note: with CMake 3.X the DEPENDS would work
-ADD_DEPENDENCIES(doc odbcslap)
+ADD_DEPENDENCIES(doc odbcslap-static odbcslap-bin)
 
 add_subdirectory(lib)
 

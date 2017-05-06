@@ -7,9 +7,9 @@ list (REMOVE_ITEM LIBRARY_SRC_FILES "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp" "${CM
 
 include_directories(${NANODBC_INCLUDE_DIR})
 
-add_library(odbcslap_static STATIC ${LIBRARY_SRC_FILES})
+add_library(odbcslap-static STATIC ${LIBRARY_SRC_FILES})
 
-link_libraries(odbcslap_static nanodbc)
+target_link_libraries(odbcslap-static nanodbc)
 
 add_executable(odbcslap-bin ${EXECUTABLE_SRC_FILES})
 
@@ -19,10 +19,10 @@ set_target_properties(odbcslap-bin PROPERTIES
         VERSION ${VERSION}  # ${VERSION} was defined in the main CMakeLists.
         )
 
-target_link_libraries(odbcslap-bin odbcslap_static)
+target_link_libraries(odbcslap-bin odbcslap-static)
 
 # now we rename Odbcslap-bin executable to Odbcslap using target properties
 set_target_properties(odbcslap-bin
         PROPERTIES OUTPUT_NAME odbcslap)
 
-MERGE_STATIC_LIBS(odbcslap odbcslap_static nanodbc)
+#MERGE_STATIC_LIBS(odbcslap odbcslap-static nanodbc)
