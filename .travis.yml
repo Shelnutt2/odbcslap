@@ -59,7 +59,7 @@ matrix:
       os: linux
     - addons: *mariadb
       compiler: gcc
-      env: DB=mariadb
+      env: DB=mysql
       os: linux
     - compiler: clang
       env: DB=sqlite
@@ -72,6 +72,7 @@ before_install:
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo update-alternatives --config gcc; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo update-alternatives --config g++; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install unixodbc sqliteodbc; fi
+    - if [[ -x "${TRAVIS_BUILD_DIR}/test/ci_setup/${DB}_setup.sh"
 
 before_script:
   - mkdir build
