@@ -72,7 +72,7 @@ before_install:
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo update-alternatives --config gcc; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo update-alternatives --config g++; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install unixodbc sqliteodbc; fi
-    - if [[ -x "${TRAVIS_BUILD_DIR}/test/ci_setup/${DB}_setup.sh"
+    - if [[ -x "${TRAVIS_BUILD_DIR}/test/ci_setup/${DB}_setup.sh" ]]; then source ${TRAVIS_BUILD_DIR}/test/ci_setup/${DB}_setup.sh; fi
 
 before_script:
   - mkdir build
@@ -81,4 +81,4 @@ before_script:
 
 script:
   - make -j4
-  - make test
+  - CTEST_OUTPUT_ON_FAILURE=TRUE make test

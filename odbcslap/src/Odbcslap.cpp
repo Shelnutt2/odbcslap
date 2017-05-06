@@ -41,9 +41,24 @@ Odbcslap::Odbcslap() {}
 
 Odbcslap::Odbcslap(const std::string &dsn, const std::string &username, const std::string &password,
          const std::vector<std::string> &queries) {
+  setDsn(dsn);
+  setUsername(username);
+  setPassword(password);
+  setQueries(queries);
 
 }
 
 Odbcslap::Odbcslap(const std::string &dsn, const std::vector<std::string> &queries) {
+  setDsn(dsn);
+  setQueries(queries);
+}
 
+
+bool Odbcslap::connect() {
+  if(username.empty() && password.empty()) {
+    this->connection = nanodbc::connection(dsn);
+  } else {
+    this->connection = nanodbc::connection(dsn, username, password);
+  }
+  return this->connection.connected();
 }

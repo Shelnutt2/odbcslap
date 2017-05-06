@@ -11,6 +11,8 @@ set(VERSION_MINOR "0")
 set(VERSION_PATCH "1")
 set(VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
 
-include_directories(include)
+SET(${PROJECT_NAME}_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include" "${NANODBC_INCLUDE_DIR}" CACHE STRING "${PROJECT_NAME} include directory")
+
+include_directories("${${PROJECT_NAME}_INCLUDE_DIR}")
 
 add_subdirectory(src)
