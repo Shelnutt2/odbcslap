@@ -28,12 +28,12 @@ void Odbcslap::setDsn(const std::string &dsn) {
   Odbcslap::dsn = dsn;
 }
 
-const std::vector<std::string> &Odbcslap::getQueries() const {
+const std::vector<std::shared_ptr<Query>> &Odbcslap::getQueries() const {
   return queries;
 }
 
-void Odbcslap::setQueries(const std::vector<std::string> &queries) {
-  Odbcslap::queries = queries;
+void Odbcslap::addQuery(std::unique_ptr<Query> &query) {
+  Odbcslap::queries.push_back(std::move(query));
 }
 
 Odbcslap::Odbcslap() {}
@@ -44,13 +44,19 @@ Odbcslap::Odbcslap(const std::string &dsn, const std::string &username, const st
   setDsn(dsn);
   setUsername(username);
   setPassword(password);
-  setQueries(queries);
+  for(auto it: queries) {
+    std::unique_ptr<Query>  qptr(new Query(it));
+    addQuery(qptr);
+  }
 
 }
 
 Odbcslap::Odbcslap(const std::string &dsn, const std::vector<std::string> &queries) {
   setDsn(dsn);
-  setQueries(queries);
+  for(auto it: queries) {
+    std::unique_ptr<Query>  qptr(new Query(it));
+    addQuery(qptr);
+  }
 }
 
 
@@ -62,3 +68,11 @@ bool Odbcslap::connect() {
   }
   return this->connection.connected();
 }
+
+void Odbcslap::benchmark() {
+  Odbcslap::connect();
+  for(auto &query : getQueries()) {
+    query->execute(connection);
+  }
+}
+

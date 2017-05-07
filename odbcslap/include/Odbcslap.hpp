@@ -8,6 +8,8 @@
 #include <string>
 #include <vector>
 #include <nanodbc.h>
+#include <iostream>
+#include <Query.hpp>
 
 class Odbcslap {
 public:
@@ -32,19 +34,26 @@ public:
 
     void setDsn(const std::string &dsn);
 
-    const std::vector<std::string> &getQueries() const;
+    const std::vector<std::shared_ptr<Query>> &getQueries() const;
 
-    void setQueries(const std::vector<std::string> &queries);
+    void addQuery(std::unique_ptr<Query> &query);
 
-    bool connect();
+    void benchmark();
+
+    friend std::ostream& operator<<(std::ostream& output, const Odbcslap& odbcslap) {
+      for(int query = 0; query < odbcslap.queries.size(); query++) {
+        output << "Query " << query << " " << *odbcslap.queries[query];
+      }
+      return output;
+    };
 private:
 
-
+    bool connect();
 
     std::string dsn;
     std::string username;
     std::string password;
-    std::vector<std::string> queries;
+    std::vector<std::shared_ptr<Query>> queries;
     nanodbc::connection connection;
 
 };
