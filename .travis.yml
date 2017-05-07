@@ -50,7 +50,7 @@ matrix:
       os: linux
     - addons: *mariadb
       compiler: gcc
-      env: DB=mysql
+      env: DB=mariadb
       os: linux
     - compiler: clang
       env: DB=sqlite
