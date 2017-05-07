@@ -22,7 +22,8 @@ protected:
     virtual void SetUp() {
       // Code here will be called immediately after the constructor (right
       // before each test).
-      o = Odbcslap(getenv("TEST_DSN"), {"Select 'hello world'"});
+      oDsnOnly = Odbcslap(getenv("ODBCSLAP_TEST_DSN"), {"Select 'hello world'"});
+      oUsernamePassword = Odbcslap(getenv("ODBCSLAP_TEST_DSN_NO_PW"), getenv("ODBCSLAP_TEST_USERNAME"), getenv("ODBCSLAP_TEST_PASSWORD"), {"Select 'hello world'"});
     }
 
     virtual void TearDown() {
@@ -31,12 +32,20 @@ protected:
     }
 
     // Objects declared here can be used by all tests in the test case for Project1.
-    Odbcslap o;
+    Odbcslap oDsnOnly;
+    Odbcslap oUsernamePassword;
 };
 
 // Test case must be called the class above
 // Also note: use TEST_F instead of TEST to access the test fixture (from google test primer)
-TEST_F(OdbcslapTest1, CanConnectToMysql) {
-bool status = o.connect();
+TEST_F(OdbcslapTest1, CanConnectWithDNSOnly) {
+bool status = oDsnOnly.connect();
 EXPECT_EQ(true, status);
+}
+
+// Test case must be called the class above
+// Also note: use TEST_F instead of TEST to access the test fixture (from google test primer)
+TEST_F(OdbcslapTest1, CanConnectWithDNSUsernameAndPassword) {
+  bool status = oUsernamePassword.connect();
+  EXPECT_EQ(true, status);
 }
