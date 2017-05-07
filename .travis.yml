@@ -27,6 +27,11 @@ ref:
     apt:
       sources: *sources
       packages: *packages
+  mysql: &mysql
+    mysql: "5.5"
+    apt:
+      sources: *sources
+      packages: *packages
   postgresql: &postgresql
     postgresql: "9.1"
     apt:
@@ -43,6 +48,10 @@ matrix:
     - addons: *sqlite
       compiler: gcc
       env: DB=sqlite
+      os: linux
+    - addons: *mysql
+      compiler: gcc
+      env: DB=mysql
       os: linux
     - addons: *postgresql
       compiler: gcc
