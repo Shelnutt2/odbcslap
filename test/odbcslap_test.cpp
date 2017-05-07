@@ -45,7 +45,8 @@ EXPECT_EQ(true, status);
 
 // Test case must be called the class above
 // Also note: use TEST_F instead of TEST to access the test fixture (from google test primer)
+/*
 TEST_F(OdbcslapTest1, CanConnectWithDNSUsernameAndPassword) {
   bool status = oUsernamePassword.connect();
   EXPECT_EQ(true, status);
-}
+}*/
