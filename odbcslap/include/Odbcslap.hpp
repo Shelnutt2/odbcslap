@@ -8,15 +8,17 @@
 #include <string>
 #include <vector>
 #include <nanodbc.h>
+#include <iostream>
+#include <Query.hpp>
 
 class Odbcslap {
 public:
     Odbcslap();
 
     Odbcslap(const std::string &dsn, const std::string &username, const std::string &password,
-             const std::vector<std::string> &queries);
+             const std::vector<std::string> &queries, const uint iterations = 10);
 
-    Odbcslap(const std::string &dsn, const std::vector<std::string> &queries);
+    Odbcslap(const std::string &dsn, const std::vector<std::string> &queries, const uint iterations = 10);
 
     virtual ~Odbcslap(){};
 
@@ -32,19 +34,31 @@ public:
 
     void setDsn(const std::string &dsn);
 
-    const std::vector<std::string> &getQueries() const;
+    const uint &getIterations() const;
 
-    void setQueries(const std::vector<std::string> &queries);
+    void setIterations(const uint &iterations);
 
-    bool connect();
+    const std::vector<std::shared_ptr<Query>> &getQueries() const;
+
+    void addQuery(std::unique_ptr<Query> &query);
+
+    void benchmark();
+
+    friend std::ostream& operator<<(std::ostream& output, const Odbcslap& odbcslap) {
+      for(int query = 0; query < odbcslap.queries.size(); query++) {
+        output << "Query " << query << " " << *odbcslap.queries[query];
+      }
+      return output;
+    };
 private:
 
-
+    bool connect();
 
     std::string dsn;
     std::string username;
     std::string password;
-    std::vector<std::string> queries;
+    std::vector<std::shared_ptr<Query>> queries;
+    uint iterations;
     nanodbc::connection connection;
 
 };

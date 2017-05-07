@@ -39,8 +39,9 @@ protected:
 // Test case must be called the class above
 // Also note: use TEST_F instead of TEST to access the test fixture (from google test primer)
 TEST_F(OdbcslapTest1, CanConnectWithDNSOnly) {
-bool status = oDsnOnly.connect();
-EXPECT_EQ(true, status);
+  oDsnOnly.benchmark();
+
+  EXPECT_LT(0, oDsnOnly.getQueries()[0]->getAverage_query_times());
 }
 
 // Test case must be called the class above
