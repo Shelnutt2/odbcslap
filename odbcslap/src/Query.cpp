@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include <Timer.hpp>
 #include <numeric>
+#include <algorithm>
 
 
 

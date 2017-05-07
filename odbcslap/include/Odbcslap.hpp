@@ -16,9 +16,9 @@ public:
     Odbcslap();
 
     Odbcslap(const std::string &dsn, const std::string &username, const std::string &password,
-             const std::vector<std::string> &queries);
+             const std::vector<std::string> &queries, const uint iterations = 10);
 
-    Odbcslap(const std::string &dsn, const std::vector<std::string> &queries);
+    Odbcslap(const std::string &dsn, const std::vector<std::string> &queries, const uint iterations = 10);
 
     virtual ~Odbcslap(){};
 
@@ -33,6 +33,10 @@ public:
     const std::string &getDsn() const;
 
     void setDsn(const std::string &dsn);
+
+    const uint &getIterations() const;
+
+    void setIterations(const uint &iterations);
 
     const std::vector<std::shared_ptr<Query>> &getQueries() const;
 
@@ -54,6 +58,7 @@ private:
     std::string username;
     std::string password;
     std::vector<std::shared_ptr<Query>> queries;
+    uint iterations;
     nanodbc::connection connection;
 
 };

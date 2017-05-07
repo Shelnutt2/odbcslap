@@ -7,7 +7,7 @@ list (REMOVE_ITEM LIBRARY_SRC_FILES "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp" "${CM
 
 include_directories(${NANODBC_INCLUDE_DIR})
 
-add_library(odbcslap-static STATIC ${LIBRARY_SRC_FILES} Query.cpp Odbcslap.cpp)
+add_library(odbcslap-static STATIC ${LIBRARY_SRC_FILES} "Query.cpp" "Odbcslap.cpp")
 
 target_link_libraries(odbcslap-static nanodbc)
 
