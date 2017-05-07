@@ -38,7 +38,7 @@ ref:
       sources: *sources
       packages: *packages
   mariadb: &mariadb
-    mariadb: "10.1"
+    mariadb: "10.2"
     apt:
       sources: *sources
       packages: *packages
