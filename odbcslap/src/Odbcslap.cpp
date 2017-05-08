@@ -36,11 +36,19 @@ void Odbcslap::setIterations(const uint &iterations) {
   Odbcslap::iterations = iterations;
 }
 
+const uint &Odbcslap::getThreads() const {
+  return threads;
+}
+
+void Odbcslap::setThreads(const uint &threads) {
+  Odbcslap::threads = threads;
+}
+
 const std::vector<std::shared_ptr<Query>> &Odbcslap::getQueries() const {
   return queries;
 }
 
-void Odbcslap::addQuery(std::unique_ptr<Query> &query) {
+void Odbcslap::addQuery(std::shared_ptr<Query> &query) {
   Odbcslap::queries.push_back(std::move(query));
 }
 
@@ -48,23 +56,27 @@ Odbcslap::Odbcslap() {}
 
 
 Odbcslap::Odbcslap(const std::string &dsn, const std::string &username, const std::string &password,
-         const std::vector<std::string> &queries, const uint iterations) {
+         const std::vector<std::string> &queries, const uint iterations, const uint threads) {
   setDsn(dsn);
   setUsername(username);
   setPassword(password);
   setIterations(iterations);
+  setThreads(threads);
+  thpool.resize(threads);
   for(auto it: queries) {
-    std::unique_ptr<Query>  qptr(new Query(it));
+    std::shared_ptr<Query>  qptr(new Query(it));
     addQuery(qptr);
   }
-
 }
 
-Odbcslap::Odbcslap(const std::string &dsn, const std::vector<std::string> &queries, const uint iterations) {
+Odbcslap::Odbcslap(const std::string &dsn, const std::vector<std::string> &queries,
+                   const uint iterations, const uint threads) {
   setDsn(dsn);
   setIterations(iterations);
+  setThreads(threads);
+  thpool.resize(threads);
   for(auto it: queries) {
-    std::unique_ptr<Query>  qptr(new Query(it));
+    std::shared_ptr<Query>  qptr(new Query(it));
     addQuery(qptr);
   }
 }
@@ -81,10 +93,32 @@ bool Odbcslap::connect() {
 
 void Odbcslap::benchmark() {
   Odbcslap::connect();
-  for(auto &query : getQueries()) {
-    for(uint iteration = 0; iteration < Odbcslap::iterations; iteration++) {
-      query->execute(connection);
+
+  // If we have more than one thread we need to use the threadpool
+  if(threads > 1) {
+    // Vector of futures to wait on
+    std::vector<std::future<void>> futures;
+    // Add each query to a thread
+    for (auto &query : getQueries()) {
+      //futures.push_back(thpool.push(Odbcslap::benchmarkThreaded, query));
+      //thpool.push([&, this](int id){ this->benchmark(query); });
     }
+
+    // Wait for threads to finish by blocking on futures
+    for(auto &future : futures) {
+      future.wait();
+    }
+  // Special case for when threads == 1
+  } else {
+    for (auto &query : getQueries()) {
+      benchmark(query);
+    }
+  }
+}
+
+void Odbcslap::benchmark(const std::shared_ptr<Query> &query) {
+  for (uint iteration = 0; iteration < Odbcslap::iterations; iteration++) {
+    query->execute(connection);
   }
 }
 

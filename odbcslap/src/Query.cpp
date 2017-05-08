@@ -69,6 +69,14 @@ double Query::getMedian_query_time() const {
   return median_query_time;
 }
 
+void Query::addQueryTime(double query_time) {
+  // Get write lock for query times vector
+  query_times_mutex.lock();
+  query_times.push_back(query_time);
+  // Release write lock for query times vector
+  query_times_mutex.unlock();
+}
+
 int Query::execute(nanodbc::connection connection) {
   // Check if connected to database
   if(!connection.connected())
@@ -78,7 +86,7 @@ int Query::execute(nanodbc::connection connection) {
     Timer tmr;
     nanodbc::execute(connection, query);
     double t = tmr.elapsed();
-    query_times.push_back(t);
+    addQueryTime(t);
     update_statistics();
   } catch(std::exception e) {
     std::cerr << "Caught exception trying to execute query: " << query << std::endl;
@@ -87,8 +95,12 @@ int Query::execute(nanodbc::connection connection) {
 }
 
 void Query::update_statistics() {
+  // Get lock for query_times vector
+  query_times_mutex.lock_shared();
   Query::max_query_time = computeMax(query_times);
   Query::min_query_time = computeMin(query_times);
   Query::average_query_times = computeAverage(query_times);
   Query::median_query_time = computeMedian(query_times);
+  // Release lock for query_times vector
+  query_times_mutex.unlock_shared();
 }

@@ -9,7 +9,9 @@ include_directories(${NANODBC_INCLUDE_DIR})
 
 add_library(odbcslap-static STATIC ${LIBRARY_SRC_FILES} "Query.cpp" "Odbcslap.cpp")
 
-target_link_libraries(odbcslap-static nanodbc)
+find_package(Threads)
+
+target_link_libraries(odbcslap-static nanodbc ${CMAKE_THREAD_LIBS_INIT})
 
 add_executable(odbcslap-bin ${EXECUTABLE_SRC_FILES})
 

@@ -10,6 +10,9 @@
 #include <nanodbc.h>
 #include <iostream>
 
+#define YAMC_RWLOCK_SCHED_DEFAULT yamc::rwlock::WriterPrefer
+#include <alternate_shared_mutex.hpp>
+
 class Query {
 public:
     Query(const std::string &query);
@@ -19,6 +22,8 @@ public:
     void setQuery(const std::string &query);
 
     const std::vector<double, std::allocator<double>> &getQuery_times() const;
+
+    void addQueryTime(double query_time);
 
     double getAverage_query_times() const;
 
@@ -44,6 +49,8 @@ private:
     double min_query_time;
     double max_query_time;
     double median_query_time;
+
+    yamc::alternate::basic_shared_mutex<yamc::rwlock::WriterPrefer> query_times_mutex;
 
     void update_statistics();
 };

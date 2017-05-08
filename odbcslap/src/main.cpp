@@ -18,6 +18,9 @@ int main(int argc, char* argv[])
     ("p,password", "Optional password to connect to database", cxxopts::value<std::string>())
     ("e,execute", "Query to execute", cxxopts::value<std::string>())
     ("i,iterations", "Number of iterations to run", cxxopts::value<uint>())
+    ("t,threads", "Number of simultaneous clients to simulate", cxxopts::value<uint>())
+    ("c,clients", "alias for -c/--clients", cxxopts::value<uint>())
+    ("j,jobs", "alias for -t/--threads", cxxopts::value<uint>())
     ;
 
   options.parse(argc, argv);
@@ -45,20 +48,30 @@ int main(int argc, char* argv[])
     iterations = options["i"].as<uint>();
   }
 
+  uint threads = 1;
+  if(options.count("t")) {
+    threads = options["t"].as<uint>();
+  } else if(options.count("c")) {
+    threads = options["c"].as<uint>();
+  } else if(options.count("j")) {
+    threads = options["j"].as<uint>();
+  }
+
   std::vector<std::string> queries;
   if(options.count("e") && !options["e"].as<std::string>().empty()) {
     queries.push_back(options["e"].as<std::string>());
   }
 
-  Odbcslap odbcslap;
+  std::unique_ptr<Odbcslap> odbcslap;
   if(password.empty() && options.count("u") == 0) {
-    odbcslap = Odbcslap(options["d"].as<std::string>(), queries, iterations);
+    odbcslap = std::unique_ptr<Odbcslap>(new Odbcslap(options["d"].as<std::string>(), queries, iterations, threads));
   } else {
-    odbcslap = Odbcslap(options["d"].as<std::string>(), options["u"].as<std::string>(), password, queries, iterations);
+    odbcslap = std::unique_ptr<Odbcslap>(new Odbcslap(options["d"].as<std::string>(), options["u"].as<std::string>(),
+                        password, queries, iterations, threads));
   }
 
-  odbcslap.benchmark();
-  std::cout << odbcslap << std::endl;
+  odbcslap->benchmark();
+  std::cout << *odbcslap << std::endl;
 
   return 0;
 }
