@@ -1,0 +1,1 @@
+select 'hello_world';

@@ -3,6 +3,7 @@
 #include <password.hpp>
 #include <cxxopts.hpp>
 #include <Odbcslap.hpp>
+#include <fstream>
 
 
 int main(int argc, char* argv[])
@@ -21,6 +22,7 @@ int main(int argc, char* argv[])
     ("t,threads", "Number of simultaneous clients to simulate", cxxopts::value<uint>())
     ("c,clients", "alias for -c/--clients", cxxopts::value<uint>())
     ("j,jobs", "alias for -t/--threads", cxxopts::value<uint>())
+    ("f,file", "File containing queries to benchmark", cxxopts::value<std::string>())
     ;
 
   options.parse(argc, argv);
@@ -29,6 +31,11 @@ int main(int argc, char* argv[])
   {
     std::cout << options.help({"", "Group"}) << std::endl;
     exit(0);
+  }
+
+  if(options.count("e") && options.count("f")) {
+    std::cerr << "Cannot specify queryfile (-f/--file) and -e/--execute option!" << std::endl;
+    return 1;
   }
 
   std::string password;
@@ -60,6 +67,15 @@ int main(int argc, char* argv[])
   std::vector<std::string> queries;
   if(options.count("e") && !options["e"].as<std::string>().empty()) {
     queries.push_back(options["e"].as<std::string>());
+  } else if (options.count("f")) {
+    std::ifstream ifs(options["f"].as<std::string>());
+    if(!ifs.good()) {
+      std::cerr << "Query file: " << options["f"].as<std::string>() << " not found" << std::endl;
+      return 1;
+    }
+    std::string query((std::istreambuf_iterator<char>(ifs)),
+                        (std::istreambuf_iterator<char>()));
+    queries.push_back(query);
   }
 
   std::unique_ptr<Odbcslap> odbcslap;
