@@ -22,11 +22,11 @@ protected:
     virtual void SetUp() {
       // Code here will be called immediately after the constructor (right
       // before each test).
-      oDsnOnly = std::unique_ptr<Odbcslap>(new Odbcslap(getenv("ODBCSLAP_TEST_DSN"), {"Select 'hello world'"}));
+      oDsnOnly = std::unique_ptr<Odbcslap>(new Odbcslap(getenv("ODBCSLAP_TEST_DSN"), {"Select 'hello world'"}, 100, 1));
       oUsernamePassword = std::unique_ptr<Odbcslap>(new Odbcslap(getenv("ODBCSLAP_TEST_DSN_NO_PW"),
                                                                  getenv("ODBCSLAP_TEST_USERNAME"),
                                                                  getenv("ODBCSLAP_TEST_PASSWORD"),
-                                                                 {"Select 'hello world'"}));
+                                                                 {"Select 'hello world'"}, 100, 1));
     }
 
     virtual void TearDown() {
@@ -44,7 +44,14 @@ protected:
 TEST_F(OdbcslapTest1, CanConnectWithDNSOnly) {
   oDsnOnly->benchmark();
 
-  EXPECT_LT(0, oDsnOnly->getQueries()[0]->getAverage_query_times());
+  EXPECT_LE(0, oDsnOnly->getQueries()[0]->getAverage_query_times());
+}
+
+TEST_F(OdbcslapTest1, ThreadedBenchmark) {
+  oDsnOnly->setThreads(10);
+  oDsnOnly->benchmark();
+
+  EXPECT_LE(0, oDsnOnly->getQueries()[0]->getAverage_query_times());
 }
 
 // Test case must be called the class above
