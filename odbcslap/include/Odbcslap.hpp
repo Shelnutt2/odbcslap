@@ -10,15 +10,17 @@
 #include <nanodbc.h>
 #include <iostream>
 #include <Query.hpp>
+#include <ctpl_stl.h>
 
 class Odbcslap {
 public:
     Odbcslap();
 
     Odbcslap(const std::string &dsn, const std::string &username, const std::string &password,
-             const std::vector<std::string> &queries, const uint iterations = 10);
+             const std::vector<std::string> &queries, const uint iterations = 10, const uint threads = 1);
 
-    Odbcslap(const std::string &dsn, const std::vector<std::string> &queries, const uint iterations = 10);
+    Odbcslap(const std::string &dsn, const std::vector<std::string> &queries,
+             const uint iterations = 10, const uint threads = 1);
 
     virtual ~Odbcslap(){};
 
@@ -38,11 +40,17 @@ public:
 
     void setIterations(const uint &iterations);
 
+    const uint &getThreads() const;
+
+    void setThreads(const uint &threads);
+
     const std::vector<std::shared_ptr<Query>> &getQueries() const;
 
-    void addQuery(std::unique_ptr<Query> &query);
+    void addQuery(std::shared_ptr<Query> &query);
 
     void benchmark();
+
+    void benchmark(const std::shared_ptr<Query> &query);
 
     friend std::ostream& operator<<(std::ostream& output, const Odbcslap& odbcslap) {
       for(int query = 0; query < odbcslap.queries.size(); query++) {
@@ -59,7 +67,9 @@ private:
     std::string password;
     std::vector<std::shared_ptr<Query>> queries;
     uint iterations;
+    uint threads;
     nanodbc::connection connection;
+    ctpl::thread_pool thpool;
 
 };
 #endif //PROJECT_ODBCSLAP_HPP

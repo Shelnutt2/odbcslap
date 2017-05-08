@@ -22,8 +22,11 @@ protected:
     virtual void SetUp() {
       // Code here will be called immediately after the constructor (right
       // before each test).
-      oDsnOnly = Odbcslap(getenv("ODBCSLAP_TEST_DSN"), {"Select 'hello world'"});
-      oUsernamePassword = Odbcslap(getenv("ODBCSLAP_TEST_DSN_NO_PW"), getenv("ODBCSLAP_TEST_USERNAME"), getenv("ODBCSLAP_TEST_PASSWORD"), {"Select 'hello world'"});
+      oDsnOnly = std::unique_ptr<Odbcslap>(new Odbcslap(getenv("ODBCSLAP_TEST_DSN"), {"Select 'hello world'"}));
+      oUsernamePassword = std::unique_ptr<Odbcslap>(new Odbcslap(getenv("ODBCSLAP_TEST_DSN_NO_PW"),
+                                                                 getenv("ODBCSLAP_TEST_USERNAME"),
+                                                                 getenv("ODBCSLAP_TEST_PASSWORD"),
+                                                                 {"Select 'hello world'"}));
     }
 
     virtual void TearDown() {
@@ -32,16 +35,16 @@ protected:
     }
 
     // Objects declared here can be used by all tests in the test case for Project1.
-    Odbcslap oDsnOnly;
-    Odbcslap oUsernamePassword;
+    std::unique_ptr<Odbcslap> oDsnOnly;
+    std::unique_ptr<Odbcslap> oUsernamePassword;
 };
 
 // Test case must be called the class above
 // Also note: use TEST_F instead of TEST to access the test fixture (from google test primer)
 TEST_F(OdbcslapTest1, CanConnectWithDNSOnly) {
-  oDsnOnly.benchmark();
+  oDsnOnly->benchmark();
 
-  EXPECT_LT(0, oDsnOnly.getQueries()[0]->getAverage_query_times());
+  EXPECT_LT(0, oDsnOnly->getQueries()[0]->getAverage_query_times());
 }
 
 // Test case must be called the class above
