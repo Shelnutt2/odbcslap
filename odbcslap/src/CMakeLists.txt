@@ -14,6 +14,7 @@ find_package(Threads)
 target_link_libraries(odbcslap-static nanodbc ${CMAKE_THREAD_LIBS_INIT})
 
 add_executable(odbcslap-bin ${EXECUTABLE_SRC_FILES})
+install(TARGETS odbcslap-bin RUNTIME DESTINATION bin)
 
 # Set the build version. It will be used in thre name of the lib, with corresponding
 # symlinks created. SOVERSION could also be specified for api version.
