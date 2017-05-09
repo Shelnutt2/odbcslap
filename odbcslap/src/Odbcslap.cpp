@@ -100,8 +100,7 @@ void Odbcslap::benchmark() {
     std::vector<std::future<void>> futures;
     // Add each query to a thread
     for (auto &query : getQueries()) {
-      //futures.push_back(thpool.push(Odbcslap::benchmarkThreaded, query));
-      //thpool.push([&, this](int id){ this->benchmark(query); });
+      futures.push_back(thpool.push([&, this](int id){ this->benchmark(query); }));
     }
 
     // Wait for threads to finish by blocking on futures

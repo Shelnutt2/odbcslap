@@ -53,7 +53,7 @@ public:
     void benchmark(const std::shared_ptr<Query> &query);
 
     friend std::ostream& operator<<(std::ostream& output, const Odbcslap& odbcslap) {
-      for(int query = 0; query < odbcslap.queries.size(); query++) {
+      for(uint query = 0; query < odbcslap.queries.size(); query++) {
         output << "Query " << query << " " << *odbcslap.queries[query];
       }
       return output;
