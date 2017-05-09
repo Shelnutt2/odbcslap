@@ -2,6 +2,8 @@
 Like mysqlslap but for odbc
 
 [![Build Status](https://travis-ci.org/Shelnutt2/odbcslap.svg?branch=master)](https://travis-ci.org/Shelnutt2/odbcslap)
+[![codecov](https://codecov.io/gh/Shelnutt2/odbcslap/branch/master/graph/badge.svg)](https://codecov.io/gh/Shelnutt2/odbcslap)
+
 
 ## Installation
 
@@ -52,7 +54,7 @@ odbcslap -d "Driver=MySQL;Server=localhost;Database=test;User=odbcslap_test;Pass
 Use file containing sql queries:
 
 ```bash
-odbcslap -d "MyDSN -f /path/to/file.sql
+odbcslap -d "MyDSN" -f /path/to/file.sql
 ```
 
 See [test/test.sql](test/test.sql) for sample sql file

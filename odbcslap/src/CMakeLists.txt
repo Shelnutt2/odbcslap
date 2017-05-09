@@ -7,11 +7,18 @@ list (REMOVE_ITEM LIBRARY_SRC_FILES "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp" "${CM
 
 include_directories(${NANODBC_INCLUDE_DIR})
 
-add_library(odbcslap-static STATIC ${LIBRARY_SRC_FILES} "Query.cpp" "Odbcslap.cpp")
+add_library(odbcslap-static STATIC ${LIBRARY_SRC_FILES})
 
 find_package(Threads)
 
 target_link_libraries(odbcslap-static nanodbc ${CMAKE_THREAD_LIBS_INIT})
+
+#[[if (COVERALLS)
+    coveralls_setup(
+            "${LIBRARY_SRC_FILES}"
+            ${COVERALLS_UPLOAD}
+            "${CMAKE_SOURCE_DIR}/cmake")
+endif()]]
 
 add_executable(odbcslap-bin ${EXECUTABLE_SRC_FILES})
 install(TARGETS odbcslap-bin RUNTIME DESTINATION bin)
