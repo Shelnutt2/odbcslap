@@ -23,6 +23,7 @@ ref:
     - odbc-postgresql
     - unixodbc
     - unixodbc-dev
+    - lcov
   sqlite: &sqlite
     apt:
       sources: *sources
@@ -47,38 +48,49 @@ matrix:
   include:
     - addons: *sqlite
       compiler: gcc
-      env: DB=sqlite
+      env: DB=sqlite CMAKE_BUILD_TYPE=Release
       os: linux
     - addons: *mysql
       compiler: gcc
-      env: DB=mysql
+      env: DB=mysql CMAKE_BUILD_TYPE=Release
       os: linux
     - addons: *postgresql
       compiler: gcc
-      env: DB=postgresql
+      env: DB=postgresql CMAKE_BUILD_TYPE=Release
       os: linux
  #   - addons: *mariadb
  #     compiler: gcc
- #     env: DB=mariadb
+ #     env: DB=mariadb CMAKE_BUILD_TYPE=Release
  #     os: linux
+    - addons: *sqlite
+      compiler: gcc
+      env: DB=sqlite CMAKE_BUILD_TYPE=coverage
+      os: linux
     - compiler: clang
-      env: DB=sqlite
+      env: DB=sqlite CMAKE_BUILD_TYPE=Release
       os: osx
 
 # before_install runs after matrix.addons.apt installation targets in the matrix
 before_install:
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 50; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-5 50; fi
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo update-alternatives --install /usr/bin/gcov gcov /usr/bin/gcov-5 50; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo update-alternatives --config gcc; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo update-alternatives --config g++; fi
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo update-alternatives --config gcov; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install unixodbc sqliteodbc; fi
     - if [[ -x "${TRAVIS_BUILD_DIR}/test/ci_setup/${DB}_setup.sh" ]]; then source ${TRAVIS_BUILD_DIR}/test/ci_setup/${DB}_setup.sh; fi
+    - if [[ "$CMAKE_BUILD_TYPE" == "coverage" ]]; then pip install --user cpp-coveralls; fi
 
 before_script:
   - mkdir build
   - cd build
-  - cmake ..
+  - cmake .. -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
 
 script:
   - make -j4
   - CTEST_OUTPUT_ON_FAILURE=TRUE make test
+
+after_success:
+  - if [[ "$CMAKE_BUILD_TYPE" == "coverage" ]]; then make coverage; fi
+  - if [[ "$CMAKE_BUILD_TYPE" == "coverage" ]]; then coveralls --gcov-options '\-lp'; fi

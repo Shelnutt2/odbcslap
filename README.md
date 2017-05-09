@@ -2,6 +2,7 @@
 Like mysqlslap but for odbc
 
 [![Build Status](https://travis-ci.org/Shelnutt2/odbcslap.svg?branch=master)](https://travis-ci.org/Shelnutt2/odbcslap)
+[![Coverage Status](https://coveralls.io/repos/github/Shelnutt2/odbcslap/badge.svg?branch=master)](https://coveralls.io/github/Shelnutt2/odbcslap?branch=master)
 
 ## Installation
 

@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.0.0)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 INCLUDE(MergeStaticLibs)
+INCLUDE(EnableCoverageReport)
 
 enable_testing() # needed on top-level CMakeLists.txt
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
