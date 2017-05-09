@@ -13,6 +13,13 @@ find_package(Threads)
 
 target_link_libraries(odbcslap-static nanodbc ${CMAKE_THREAD_LIBS_INIT})
 
+#[[if (COVERALLS)
+    coveralls_setup(
+            "${LIBRARY_SRC_FILES}"
+            ${COVERALLS_UPLOAD}
+            "${CMAKE_SOURCE_DIR}/cmake")
+endif()]]
+
 add_executable(odbcslap-bin ${EXECUTABLE_SRC_FILES})
 install(TARGETS odbcslap-bin RUNTIME DESTINATION bin)
 

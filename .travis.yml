@@ -64,7 +64,7 @@ matrix:
  #     os: linux
     - addons: *sqlite
       compiler: gcc
-      env: DB=sqlite CMAKE_BUILD_TYPE=coverage
+      env: DB=sqlite CMAKE_BUILD_TYPE=Debug CMAKE_ADDITIONAL_ARGS="-DCOVERAGE=ON" COVERAGE=1
       os: linux
     - compiler: clang
       env: DB=sqlite CMAKE_BUILD_TYPE=Release
@@ -80,17 +80,15 @@ before_install:
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo update-alternatives --config gcov; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install unixodbc sqliteodbc; fi
     - if [[ -x "${TRAVIS_BUILD_DIR}/test/ci_setup/${DB}_setup.sh" ]]; then source ${TRAVIS_BUILD_DIR}/test/ci_setup/${DB}_setup.sh; fi
-    - if [[ "$CMAKE_BUILD_TYPE" == "coverage" ]]; then pip install --user cpp-coveralls; fi
 
 before_script:
   - mkdir build
   - cd build
-  - cmake .. -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+  - cmake .. -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} ${CMAKE_ADDITIONAL_ARGS}
 
 script:
   - make -j4
   - CTEST_OUTPUT_ON_FAILURE=TRUE make test
 
 after_success:
-  - if [[ "$CMAKE_BUILD_TYPE" == "coverage" ]]; then make coverage; fi
-  - if [[ "$CMAKE_BUILD_TYPE" == "coverage" ]]; then coveralls --gcov-options '\-lp'; fi
+  - if [[ "$COVERAGE" == "1" ]]; then ${TRAVIS_BUILD_DIR}/test/ci_setup/make_code_coverage.sh; fi
