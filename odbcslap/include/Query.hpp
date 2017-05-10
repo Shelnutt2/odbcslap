@@ -33,7 +33,7 @@ public:
 
     double getMedian_query_time() const;
 
-    int execute(nanodbc::connection connection);
+    void execute(nanodbc::connection connection);
 
     friend std::ostream& operator<<(std::ostream& output, const Query& query) {
       output << "Response Time: average: " << query.average_query_times
