@@ -77,7 +77,7 @@ void Query::addQueryTime(double query_time) {
   query_times_mutex.unlock();
 }
 
-int Query::execute(nanodbc::connection connection) {
+void Query::execute(nanodbc::connection connection) {
   // Check if connected to database
   if(!connection.connected())
     throw std::invalid_argument("Database connection passed not connected when trying to run query!");
