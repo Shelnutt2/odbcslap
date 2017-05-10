@@ -52,7 +52,9 @@ void Odbcslap::addQuery(std::shared_ptr<Query> &query) {
   Odbcslap::queries.push_back(std::move(query));
 }
 
-Odbcslap::Odbcslap() {}
+Odbcslap::Odbcslap() {
+  env = ncurses::Environment();
+}
 
 
 Odbcslap::Odbcslap(const std::string &dsn, const std::string &username, const std::string &password,
@@ -67,6 +69,8 @@ Odbcslap::Odbcslap(const std::string &dsn, const std::string &username, const st
     std::shared_ptr<Query>  qptr(new Query(it));
     addQuery(qptr);
   }
+
+  env = ncurses::Environment();
 }
 
 Odbcslap::Odbcslap(const std::string &dsn, const std::vector<std::string> &queries,
@@ -79,6 +83,8 @@ Odbcslap::Odbcslap(const std::string &dsn, const std::vector<std::string> &queri
     std::shared_ptr<Query>  qptr(new Query(it));
     addQuery(qptr);
   }
+
+  env = ncurses::Environment();
 }
 
 
@@ -118,6 +124,7 @@ void Odbcslap::benchmark() {
 void Odbcslap::benchmark(const std::shared_ptr<Query> &query) {
   for (uint iteration = 0; iteration < Odbcslap::iterations; iteration++) {
     query->execute(connection);
+    ncurses::printline(query->to_string());
   }
 }
 

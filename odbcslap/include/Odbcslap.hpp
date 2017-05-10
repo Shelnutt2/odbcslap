@@ -11,6 +11,7 @@
 #include <iostream>
 #include <Query.hpp>
 #include <ctpl_stl.h>
+#include <display.hpp>
 
 class Odbcslap {
 public:
@@ -52,12 +53,20 @@ public:
 
     void benchmark(const std::shared_ptr<Query> &query);
 
-    friend std::ostream& operator<<(std::ostream& output, const Odbcslap& odbcslap) {
-      for(uint query = 0; query < odbcslap.queries.size(); query++) {
-        output << "Query " << query << " " << *odbcslap.queries[query];
+    std::string to_string() const {
+      std::stringstream ret;
+      for(uint query = 0; query < queries.size(); query++) {
+        ret << "Query " << query << " " << *queries[query] << std::endl;
       }
+      return ret.str();
+    };
+
+    friend std::ostream& operator<<(std::ostream& output, const Odbcslap& odbcslap) {
+      output << odbcslap.to_string();
       return output;
     };
+
+    operator const std::string () const { return to_string(); }
 private:
 
     bool connect();
@@ -70,6 +79,8 @@ private:
     uint threads;
     nanodbc::connection connection;
     ctpl::thread_pool thpool;
+
+    ncurses::Environment env;
 
 };
 #endif //PROJECT_ODBCSLAP_HPP
