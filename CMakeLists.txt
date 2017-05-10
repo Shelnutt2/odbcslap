@@ -34,12 +34,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 
 IF ( CMAKE_COMPILER_IS_GNUCC )
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic")
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -Wno-ignored-qualifiers")
 ENDIF()
 
 
 IF (CMAKE_CXX_COMPILER MATCHES ".*clang")
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Weverything -pedantic")
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Weverything -pedantic -Wno-ignored-qualifiers")
 ENDIF()
 
 add_subdirectory(odbcslap)
