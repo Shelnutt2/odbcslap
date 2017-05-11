@@ -85,7 +85,7 @@ int main(int argc, char* argv[])
                         password, queries, iterations, threads));
   }
 
-  odbcslap->benchmark();
+  odbcslap->run();
   std::cout << *odbcslap << std::endl;
 
   return 0;

@@ -11,17 +11,19 @@
 #include <iostream>
 #include <Query.hpp>
 #include <ctpl_stl.h>
-#include <display.hpp>
+#include <cursesapp.h>
 
-class Odbcslap {
+
+class Odbcslap : public NCursesApplication {
 public:
-    Odbcslap();
+    Odbcslap() : Odbcslap(std::string(), std::string(), std::string(), {}){};
 
     Odbcslap(const std::string &dsn, const std::string &username, const std::string &password,
              const std::vector<std::string> &queries, const uint32_t iterations = 10, const uint32_t threads = 1);
 
     Odbcslap(const std::string &dsn, const std::vector<std::string> &queries,
-             const uint32_t iterations = 10, const uint32_t threads = 1);
+             const uint32_t iterations = 10, const uint32_t threads = 1) : Odbcslap(dsn, std::string(), std::string(),
+                                                                                    queries, iterations, threads){};
 
     virtual ~Odbcslap(){};
 
@@ -53,6 +55,8 @@ public:
 
     void benchmark(const std::shared_ptr<Query> &query);
 
+    int run();
+
     std::string to_string() const {
       std::stringstream ret;
       for(uint32_t query = 0; query < queries.size(); query++) {
@@ -70,6 +74,8 @@ public:
 private:
 
     bool connect();
+    int titlesize() const { return 2; };
+    void title();
 
     std::string dsn;
     std::string username;
@@ -79,9 +85,6 @@ private:
     uint32_t threads;
     nanodbc::connection connection;
     ctpl::thread_pool thpool;
-
-    ncurses::Environment env;
-
 };
 #endif //PROJECT_ODBCSLAP_HPP
 

@@ -3,6 +3,8 @@
 //
 
 #include <Odbcslap.hpp>
+#include <cstring>
+#include <cursesp.h>
 
 const std::string &Odbcslap::getUsername() const {
   return username;
@@ -52,13 +54,9 @@ void Odbcslap::addQuery(std::shared_ptr<Query> &query) {
   Odbcslap::queries.push_back(std::move(query));
 }
 
-Odbcslap::Odbcslap() {
-  env = ncurses::Environment();
-}
-
-
 Odbcslap::Odbcslap(const std::string &dsn, const std::string &username, const std::string &password,
-         const std::vector<std::string> &queries, const uint32_t iterations, const uint32_t threads) {
+         const std::vector<std::string> &queries, const uint32_t iterations, const uint32_t threads)
+        : NCursesApplication(TRUE){
   setDsn(dsn);
   setUsername(username);
   setPassword(password);
@@ -69,24 +67,7 @@ Odbcslap::Odbcslap(const std::string &dsn, const std::string &username, const st
     std::shared_ptr<Query>  qptr(new Query(it));
     addQuery(qptr);
   }
-
-  env = ncurses::Environment();
 }
-
-Odbcslap::Odbcslap(const std::string &dsn, const std::vector<std::string> &queries,
-                   const uint32_t iterations, const uint32_t threads) {
-  setDsn(dsn);
-  setIterations(iterations);
-  setThreads(threads);
-  thpool.resize(threads);
-  for(auto it: queries) {
-    std::shared_ptr<Query>  qptr(new Query(it));
-    addQuery(qptr);
-  }
-
-  env = ncurses::Environment();
-}
-
 
 bool Odbcslap::connect() {
   if(username.empty() && password.empty()) {
@@ -124,7 +105,26 @@ void Odbcslap::benchmark() {
 void Odbcslap::benchmark(const std::shared_ptr<Query> &query) {
   for (uint32_t iteration = 0; iteration < Odbcslap::iterations; iteration++) {
     query->execute(connection);
-    ncurses::printline(query->to_string());
   }
 }
 
+void Odbcslap::title() {
+  const char * const titleText = "Simple C++ Binding Demo";
+  const int len = ::strlen(titleText);
+
+  titleWindow->bkgd(screen_titles());
+  titleWindow->addstr(0, (titleWindow->cols() - len)/2, titleText);
+  titleWindow->noutrefresh();
+}
+
+int Odbcslap::run() {
+  NCursesPanel mystd;
+  NCursesPanel P(mystd.lines() - titlesize(), mystd.cols(), titlesize() - 1, 0);
+  P.label("Demo", NULL);
+  P.show();
+  mystd.refresh();
+  ::getch();
+  P.clear();
+  benchmark();
+  return 0;
+}
