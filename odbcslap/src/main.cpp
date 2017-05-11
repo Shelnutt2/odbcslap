@@ -85,7 +85,11 @@ int main(int argc, char* argv[])
                         password, queries, iterations, threads));
   }
 
+  if(options.count("v")) {
+    odbcslap->setVerbose(true);
+  }
   odbcslap->run();
+
   std::cout << *odbcslap << std::endl;
 
   return 0;

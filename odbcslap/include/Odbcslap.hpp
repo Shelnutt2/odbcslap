@@ -12,6 +12,7 @@
 #include <Query.hpp>
 #include <ctpl_stl.h>
 #include <cursesapp.h>
+#include <chrono>
 
 
 class Odbcslap : public NCursesApplication {
@@ -51,11 +52,15 @@ public:
 
     void addQuery(std::shared_ptr<Query> &query);
 
+    void setVerbose(const bool verbose);
+
     void benchmark();
 
     void benchmark(const std::shared_ptr<Query> &query);
 
     int run();
+
+    void printStatusUpdate();
 
     std::string to_string() const {
       std::stringstream ret;
@@ -85,6 +90,11 @@ private:
     uint32_t threads;
     nanodbc::connection connection;
     ctpl::thread_pool thpool;
+    bool verbose;
+
+    std::shared_ptr<NCursesPanel> mystd;
+    std::shared_ptr<NCursesPanel> QueriesPanel;
+    std::chrono::steady_clock::time_point last_screen_update;
 };
 #endif //PROJECT_ODBCSLAP_HPP
 
