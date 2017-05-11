@@ -28,19 +28,19 @@ void Odbcslap::setDsn(const std::string &dsn) {
   Odbcslap::dsn = dsn;
 }
 
-const uint &Odbcslap::getIterations() const {
+const uint32_t &Odbcslap::getIterations() const {
   return iterations;
 }
 
-void Odbcslap::setIterations(const uint &iterations) {
+void Odbcslap::setIterations(const uint32_t &iterations) {
   Odbcslap::iterations = iterations;
 }
 
-const uint &Odbcslap::getThreads() const {
+const uint32_t &Odbcslap::getThreads() const {
   return threads;
 }
 
-void Odbcslap::setThreads(const uint &threads) {
+void Odbcslap::setThreads(const uint32_t &threads) {
   Odbcslap::threads = threads;
 }
 
@@ -58,7 +58,7 @@ Odbcslap::Odbcslap() {
 
 
 Odbcslap::Odbcslap(const std::string &dsn, const std::string &username, const std::string &password,
-         const std::vector<std::string> &queries, const uint iterations, const uint threads) {
+         const std::vector<std::string> &queries, const uint32_t iterations, const uint32_t threads) {
   setDsn(dsn);
   setUsername(username);
   setPassword(password);
@@ -74,7 +74,7 @@ Odbcslap::Odbcslap(const std::string &dsn, const std::string &username, const st
 }
 
 Odbcslap::Odbcslap(const std::string &dsn, const std::vector<std::string> &queries,
-                   const uint iterations, const uint threads) {
+                   const uint32_t iterations, const uint32_t threads) {
   setDsn(dsn);
   setIterations(iterations);
   setThreads(threads);
@@ -122,7 +122,7 @@ void Odbcslap::benchmark() {
 }
 
 void Odbcslap::benchmark(const std::shared_ptr<Query> &query) {
-  for (uint iteration = 0; iteration < Odbcslap::iterations; iteration++) {
+  for (uint32_t iteration = 0; iteration < Odbcslap::iterations; iteration++) {
     query->execute(connection);
     ncurses::printline(query->to_string());
   }

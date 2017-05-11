@@ -37,7 +37,7 @@ void ncurses::n_strings(int n, std::string s) {
 
 void ncurses::end_line() { addch('\n'); }
 
-std::string ncurses::positioned(const std::string &content, uint width, int offset) {
+std::string ncurses::positioned(const std::string &content, uint32_t width, int offset) {
   if (content.length() >= width) {
     return content;
   } else {
@@ -48,21 +48,21 @@ std::string ncurses::positioned(const std::string &content, uint width, int offs
   }
 }
 
-std::string ncurses::centered(const std::string &content, uint width) {
+std::string ncurses::centered(const std::string &content, uint32_t width) {
   auto offset = (width - content.length()) / 2;
   return positioned(content, width, offset);
 }
 
-std::string ncurses::aligned_right(const std::string &content, uint width) {
+std::string ncurses::aligned_right(const std::string &content, uint32_t width) {
   auto offset = width - content.length();
   return positioned(content, width, offset);
 }
 
-std::string ncurses::aligned_left(const std::string &content, uint width) {
+std::string ncurses::aligned_left(const std::string &content, uint32_t width) {
   return positioned(content, width, 0);
 }
 
-void ncurses::printline(const std::string &content, uint width,
+void ncurses::printline(const std::string &content, uint32_t width,
                         Aligned alignment) {
   std::string s;
   switch (alignment) {

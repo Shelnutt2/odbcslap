@@ -17,10 +17,10 @@ int main(int argc, char* argv[])
     ("u,username", "Optional username to connect to database", cxxopts::value<std::string>())
     ("p,password", "Optional password to connect to database", cxxopts::value<std::string>())
     ("e,execute", "Query to execute", cxxopts::value<std::string>())
-    ("i,iterations", "Number of iterations to run", cxxopts::value<uint>()->default_value("10"))
-    ("t,threads", "Number of simultaneous clients to simulate", cxxopts::value<uint>())
-    ("c,clients", "alias for -c/--clients", cxxopts::value<uint>())
-    ("j,jobs", "alias for -t/--threads", cxxopts::value<uint>())
+    ("i,iterations", "Number of iterations to run", cxxopts::value<uint32_t>()->default_value("10"))
+    ("t,threads", "Number of simultaneous clients to simulate", cxxopts::value<uint32_t>())
+    ("c,clients", "alias for -c/--clients", cxxopts::value<uint32_t>())
+    ("j,jobs", "alias for -t/--threads", cxxopts::value<uint32_t>())
     ("f,file", "File containing queries to benchmark", cxxopts::value<std::string>())
     ;
 
@@ -49,18 +49,18 @@ int main(int argc, char* argv[])
     password = options["p"].as<std::string>();
   }
 
-  uint iterations = 10;
+  uint32_t iterations = 10;
   if(options.count("i")) {
-    iterations = options["i"].as<uint>();
+    iterations = options["i"].as<uint32_t>();
   }
 
-  uint threads = 1;
+  uint32_t threads = 1;
   if(options.count("t")) {
-    threads = options["t"].as<uint>();
+    threads = options["t"].as<uint32_t>();
   } else if(options.count("c")) {
-    threads = options["c"].as<uint>();
+    threads = options["c"].as<uint32_t>();
   } else if(options.count("j")) {
-    threads = options["j"].as<uint>();
+    threads = options["j"].as<uint32_t>();
   }
 
   std::vector<std::string> queries;

@@ -33,13 +33,13 @@ namespace ncurses {
     void n_strings(int n, std::string s);
 
     void end_line();
-    std::string positioned(const std::string& content, uint width, int offset);
-    std::string centered(const std::string& content, uint width);
-    std::string aligned_right(const std::string& content, uint width);
-    std::string aligned_left(const std::string& content, uint width);
+    std::string positioned(const std::string& content, uint32_t width, int offset);
+    std::string centered(const std::string& content, uint32_t width);
+    std::string aligned_right(const std::string& content, uint32_t width);
+    std::string aligned_left(const std::string& content, uint32_t width);
     enum class Aligned { right, left, center };
 
-    void printline(const std::string& content, uint width = 0,
+    void printline(const std::string& content, uint32_t width = 0,
                    Aligned alignment = Aligned::left);
 
     struct Environment {

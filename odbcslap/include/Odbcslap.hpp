@@ -18,10 +18,10 @@ public:
     Odbcslap();
 
     Odbcslap(const std::string &dsn, const std::string &username, const std::string &password,
-             const std::vector<std::string> &queries, const uint iterations = 10, const uint threads = 1);
+             const std::vector<std::string> &queries, const uint32_t iterations = 10, const uint32_t threads = 1);
 
     Odbcslap(const std::string &dsn, const std::vector<std::string> &queries,
-             const uint iterations = 10, const uint threads = 1);
+             const uint32_t iterations = 10, const uint32_t threads = 1);
 
     virtual ~Odbcslap(){};
 
@@ -37,13 +37,13 @@ public:
 
     void setDsn(const std::string &dsn);
 
-    const uint &getIterations() const;
+    const uint32_t &getIterations() const;
 
-    void setIterations(const uint &iterations);
+    void setIterations(const uint32_t &iterations);
 
-    const uint &getThreads() const;
+    const uint32_t &getThreads() const;
 
-    void setThreads(const uint &threads);
+    void setThreads(const uint32_t &threads);
 
     const std::vector<std::shared_ptr<Query>> &getQueries() const;
 
@@ -55,7 +55,7 @@ public:
 
     std::string to_string() const {
       std::stringstream ret;
-      for(uint query = 0; query < queries.size(); query++) {
+      for(uint32_t query = 0; query < queries.size(); query++) {
         ret << "Query " << query << " " << *queries[query] << std::endl;
       }
       return ret.str();
@@ -75,8 +75,8 @@ private:
     std::string username;
     std::string password;
     std::vector<std::shared_ptr<Query>> queries;
-    uint iterations;
-    uint threads;
+    uint32_t iterations;
+    uint32_t threads;
     nanodbc::connection connection;
     ctpl::thread_pool thpool;
 
