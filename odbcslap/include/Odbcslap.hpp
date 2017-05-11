@@ -20,11 +20,13 @@ public:
     Odbcslap() : Odbcslap(std::string(), std::string(), std::string(), {}){};
 
     Odbcslap(const std::string &dsn, const std::string &username, const std::string &password,
-             const std::vector<std::string> &queries, const uint32_t iterations = 10, const uint32_t threads = 1);
+             const std::vector<std::string> &queries, const uint32_t iterations = 10, const uint32_t threads = 1,
+             const bool verbose = false);
 
     Odbcslap(const std::string &dsn, const std::vector<std::string> &queries,
-             const uint32_t iterations = 10, const uint32_t threads = 1) : Odbcslap(dsn, std::string(), std::string(),
-                                                                                    queries, iterations, threads){};
+             const uint32_t iterations = 10, const uint32_t threads = 1,
+             const bool verbose = false) : Odbcslap(dsn, std::string(), std::string(),
+                                                    queries, iterations, threads, verbose){};
 
     virtual ~Odbcslap(){};
 

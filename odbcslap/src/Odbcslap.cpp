@@ -63,8 +63,8 @@ void Odbcslap::setVerbose(const bool verbose) {
 }
 
 Odbcslap::Odbcslap(const std::string &dsn, const std::string &username, const std::string &password,
-         const std::vector<std::string> &queries, const uint32_t iterations, const uint32_t threads)
-        : NCursesApplication(TRUE){
+         const std::vector<std::string> &queries, const uint32_t iterations, const uint32_t threads, const bool verbose)
+        : NCursesApplication(verbose){
   setDsn(dsn);
   setUsername(username);
   setPassword(password);

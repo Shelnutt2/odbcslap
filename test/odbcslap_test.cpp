@@ -22,11 +22,12 @@ protected:
     virtual void SetUp() {
       // Code here will be called immediately after the constructor (right
       // before each test).
-      oDsnOnly = std::unique_ptr<Odbcslap>(new Odbcslap(getenv("ODBCSLAP_TEST_DSN"), {"Select 'hello world'"}, 100, 1));
+      oDsnOnly = std::unique_ptr<Odbcslap>(new Odbcslap(getenv("ODBCSLAP_TEST_DSN"), {"Select 'hello world'"},
+                                                        100, 1, false));
       oUsernamePassword = std::unique_ptr<Odbcslap>(new Odbcslap(getenv("ODBCSLAP_TEST_DSN_NO_PW"),
                                                                  getenv("ODBCSLAP_TEST_USERNAME"),
                                                                  getenv("ODBCSLAP_TEST_PASSWORD"),
-                                                                 {"Select 'hello world'"}, 100, 1));
+                                                                 {"Select 'hello world'"}, 100, 1, false));
     }
 
     virtual void TearDown() {
