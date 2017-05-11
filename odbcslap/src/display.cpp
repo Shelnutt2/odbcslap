@@ -3,7 +3,7 @@
 //
 
 #include <display.hpp>
-
+#include <locale.h>
 
 ncurses::ColorScheme::ColorScheme(const std::vector<int> &scheme_) : scheme(scheme_) {
   start_color();
