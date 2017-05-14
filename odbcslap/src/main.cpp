@@ -12,7 +12,7 @@ int main(int argc, char* argv[])
 
   options.add_options()
     ("help", "Print help")
-    ("v,verbose", "Enable verbose output", cxxopts::value<bool>()->default_value("false"))
+    ("v,verbose", "Enable verbose output")
     ("d,dsn", "Dsn to connect with", cxxopts::value<std::string>())
     ("u,username", "Optional username to connect to database", cxxopts::value<std::string>())
     ("p,password", "Optional password to connect to database", cxxopts::value<std::string>())
@@ -79,13 +79,15 @@ int main(int argc, char* argv[])
 
   std::unique_ptr<Odbcslap> odbcslap;
   if(password.empty() && options.count("u") == 0) {
-    odbcslap = std::unique_ptr<Odbcslap>(new Odbcslap(options["d"].as<std::string>(), queries, iterations,
-                                                      threads, options["v"].as<bool>()));
+    odbcslap = std::unique_ptr<Odbcslap>(new Odbcslap(options["d"].as<std::string>(), queries, iterations, threads));
   } else {
     odbcslap = std::unique_ptr<Odbcslap>(new Odbcslap(options["d"].as<std::string>(), options["u"].as<std::string>(),
-                        password, queries, iterations, threads, options["v"].as<bool>()));
+                        password, queries, iterations, threads));
   }
 
+  if(options.count("v")) {
+    odbcslap->setVerbose(true);
+  }
   odbcslap->run();
 
   std::cout << *odbcslap << std::endl;
