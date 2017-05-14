@@ -9,6 +9,7 @@
 #include <vector>
 #include <nanodbc.h>
 #include <iostream>
+#include <sstream>      // std::stringstream, std::stringbuf
 
 #define YAMC_RWLOCK_SCHED_DEFAULT yamc::rwlock::WriterPrefer
 #include <alternate_shared_mutex.hpp>
@@ -35,12 +36,20 @@ public:
 
     void execute(nanodbc::connection connection);
 
+    std::string to_string() const {
+      std::stringstream ret;
+      ret << "Response Time: average: " << average_query_times
+                                    << " , median: " << median_query_time << ", min: "
+                                    << min_query_time << ", max: " << max_query_time;
+      return ret.str();
+    };
+
     friend std::ostream& operator<<(std::ostream& output, const Query& query) {
-      output << "Response Time: average: " << query.average_query_times
-             << " , median: " << query.median_query_time << ", min: "
-             << query.min_query_time << ", max: " << query.max_query_time;
+      output << query.to_string();
       return output;
     };
+
+    operator const std::string () const { return to_string(); }
 
 private:
     std::string query;

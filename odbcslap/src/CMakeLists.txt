@@ -11,7 +11,7 @@ add_library(odbcslap-static STATIC ${LIBRARY_SRC_FILES})
 
 find_package(Threads)
 
-target_link_libraries(odbcslap-static nanodbc ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(odbcslap-static nanodbc ${CMAKE_THREAD_LIBS_INIT} ${CURSES_LIBRARIES})
 
 #[[if (COVERALLS)
     coveralls_setup(

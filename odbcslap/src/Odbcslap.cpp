@@ -3,6 +3,12 @@
 //
 
 #include <Odbcslap.hpp>
+#include <cstring>
+#include <cursesp.h>
+
+#ifndef __MINGW32__
+extern "C" unsigned int sleep(unsigned int);
+#endif
 
 const std::string &Odbcslap::getUsername() const {
   return username;
@@ -28,19 +34,19 @@ void Odbcslap::setDsn(const std::string &dsn) {
   Odbcslap::dsn = dsn;
 }
 
-const uint &Odbcslap::getIterations() const {
+const uint32_t &Odbcslap::getIterations() const {
   return iterations;
 }
 
-void Odbcslap::setIterations(const uint &iterations) {
+void Odbcslap::setIterations(const uint32_t &iterations) {
   Odbcslap::iterations = iterations;
 }
 
-const uint &Odbcslap::getThreads() const {
+const uint32_t &Odbcslap::getThreads() const {
   return threads;
 }
 
-void Odbcslap::setThreads(const uint &threads) {
+void Odbcslap::setThreads(const uint32_t &threads) {
   Odbcslap::threads = threads;
 }
 
@@ -52,11 +58,13 @@ void Odbcslap::addQuery(std::shared_ptr<Query> &query) {
   Odbcslap::queries.push_back(std::move(query));
 }
 
-Odbcslap::Odbcslap() {}
-
+void Odbcslap::setVerbose(const bool verbose) {
+  Odbcslap::verbose = verbose;
+}
 
 Odbcslap::Odbcslap(const std::string &dsn, const std::string &username, const std::string &password,
-         const std::vector<std::string> &queries, const uint iterations, const uint threads) {
+         const std::vector<std::string> &queries, const uint32_t iterations, const uint32_t threads)
+        : NCursesApplication(TRUE){
   setDsn(dsn);
   setUsername(username);
   setPassword(password);
@@ -67,20 +75,9 @@ Odbcslap::Odbcslap(const std::string &dsn, const std::string &username, const st
     std::shared_ptr<Query>  qptr(new Query(it));
     addQuery(qptr);
   }
-}
 
-Odbcslap::Odbcslap(const std::string &dsn, const std::vector<std::string> &queries,
-                   const uint iterations, const uint threads) {
-  setDsn(dsn);
-  setIterations(iterations);
-  setThreads(threads);
-  thpool.resize(threads);
-  for(auto it: queries) {
-    std::shared_ptr<Query>  qptr(new Query(it));
-    addQuery(qptr);
-  }
+  last_screen_update = std::chrono::steady_clock::now();
 }
-
 
 bool Odbcslap::connect() {
   if(username.empty() && password.empty()) {
@@ -116,8 +113,52 @@ void Odbcslap::benchmark() {
 }
 
 void Odbcslap::benchmark(const std::shared_ptr<Query> &query) {
-  for (uint iteration = 0; iteration < Odbcslap::iterations; iteration++) {
+  for (uint32_t iteration = 0; iteration < Odbcslap::iterations; iteration++) {
     query->execute(connection);
+    if(verbose)
+      printStatusUpdate();
   }
 }
 
+void Odbcslap::title() {
+  const char * const titleText = "Simple C++ Binding Demo";
+  const int len = ::strlen(titleText);
+
+  titleWindow->bkgd(screen_titles());
+  titleWindow->addstr(0, (titleWindow->cols() - len)/2, titleText);
+  titleWindow->noutrefresh();
+}
+
+int Odbcslap::run() {
+  mystd = std::make_shared<NCursesPanel>();
+  NCursesPanel P(mystd->lines() - titlesize(), mystd->cols(), titlesize() - 1, 0);
+  P.label("ODBC Slap", NULL);
+  P.show();
+
+  QueriesPanel = std::make_shared<NCursesPanel>(mystd->lines() - P.lines(), mystd->cols(), titlesize(), 0);
+
+  if (NCursesApplication::getApplication()->useColors()) {
+    QueriesPanel->bkgd(' '|COLOR_PAIR(1));
+  }
+
+  mystd->refresh();
+  benchmark();
+
+  mystd->clear();
+  mystd->refresh();
+  return 0;
+}
+
+void Odbcslap::printStatusUpdate() {
+  std::chrono::milliseconds diff = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - last_screen_update);
+  if( diff >= std::chrono::milliseconds(500)) {
+    QueriesPanel->clear();
+    for (uint32_t index = 0; index < queries.size(); index++) {
+      std::string query_details = "Query " + std::to_string(index) + ": " + queries[index]->to_string();
+      QueriesPanel->printw(index, 0, query_details.c_str());
+    }
+    QueriesPanel->refresh();
+    mystd->refresh();
+    last_screen_update = std::chrono::steady_clock::now();
+  }
+}

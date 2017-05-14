@@ -13,6 +13,9 @@ set(VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
 
 SET(${PROJECT_NAME}_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include" "${NANODBC_INCLUDE_DIR}" CACHE STRING "${PROJECT_NAME} include directory")
 
-include_directories("${${PROJECT_NAME}_INCLUDE_DIR}")
+SET(CURSES_NEED_NCURSES TRUE)
+find_package(NCursespp REQUIRED)
+
+include_directories("${${PROJECT_NAME}_INCLUDE_DIR}" ${CURSES_INCLUDE_DIR})
 
 add_subdirectory(src)
